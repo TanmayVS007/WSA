@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "62435836724",
+    "project_id": "central-kit-508217-e6",
+    "storage_bucket": "central-kit-508217-e6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62435836724:android:0fafb237b314712ebe5b61",
+        "android_client_info": {
+          "package_name": "com.womensafety.band.women_safety_band"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_K_XLwjBtPRdBsoTAdVHHsZI8S2qmGT0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
