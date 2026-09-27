@@ -97,12 +97,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         strokeWidth: 2,
       ),
 
-      // 2. 5km Community Helper & Safe Haven Geofence
+      // 2. 3km Community Helper & Safe Haven Geofence
       if (_showHelperGeofence)
         Circle(
           circleId: const CircleId('helper_geofence_5km'),
           center: centerLatLng,
-          radius: 3000.0, // Strict 5km radius geofence
+          radius: 3000.0, // Strict 3km radius geofence
           fillColor: (isEmergency
               ? AppColors.emergencyRed.withAlpha(20)
               : AppColors.primary.withAlpha(16)),

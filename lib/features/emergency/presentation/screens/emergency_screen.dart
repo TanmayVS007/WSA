@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../domain/entities/emergency_event.dart';
 import '../providers/emergency_provider.dart';
 import '../../../device/presentation/providers/device_provider.dart';
@@ -23,13 +24,17 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
       backgroundColor: Colors.transparent,
       builder: (ctx) => _PinResolutionModal(
         onSuccess: () {
-          ref.read(emergencyNotifierProvider.notifier).resolveEmergency(
+          ref
+              .read(emergencyNotifierProvider.notifier)
+              .resolveEmergency(
                 notes: 'Verified safe via Master Safety PIN authentication',
               );
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               backgroundColor: AppColors.tertiary,
-              content: Text('Safety PIN validated. Alert resolved and emergency channels updated.'),
+              content: Text(
+                'Safety PIN validated. Alert resolved and emergency channels updated.',
+              ),
             ),
           );
         },
@@ -60,7 +65,9 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isEmergencyActive ? AppColors.emergencyRed : AppColors.primary,
+                color: isEmergencyActive
+                    ? AppColors.emergencyRed
+                    : AppColors.primary,
               ),
               child: isEmergencyActive
                   ? const Icon(
@@ -68,10 +75,7 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                       color: Colors.white,
                       size: 16,
                     )
-                  : const AppLogo.circle(
-                      size: 24,
-                      fit: BoxFit.contain,
-                    ),
+                  : const AppLogo.circle(size: 24, fit: BoxFit.contain),
             ),
             const SizedBox(width: 10),
             Text(
@@ -95,9 +99,7 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
             children: [
               if (isEmergencyActive) ...[
                 // 1. Emergency Active Pulsing Banner
-                _PulsingEmergencyBanner(
-                  event: activeEvent,
-                ),
+                _PulsingEmergencyBanner(event: activeEvent),
                 const SizedBox(height: 14),
 
                 // 2. Live Broadcasting Card
@@ -105,10 +107,14 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.surfaceDark : AppColors.surfaceContainerLowest,
+                    color: isDark
+                        ? AppColors.surfaceDark
+                        : AppColors.surfaceContainerLowest,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isDark ? AppColors.cardBorderDark : const Color(0xFFE2E8F0),
+                      color: isDark
+                          ? AppColors.cardBorderDark
+                          : const Color(0xFFE2E8F0),
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -146,7 +152,10 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                             ],
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: isDark
                                   ? AppColors.surfaceDarkElevated
@@ -155,7 +164,11 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                             ),
                             child: const Row(
                               children: [
-                                Icon(Icons.gps_fixed_rounded, size: 14, color: AppColors.onSurfaceVariant),
+                                Icon(
+                                  Icons.gps_fixed_rounded,
+                                  size: 14,
+                                  color: AppColors.onSurfaceVariant,
+                                ),
                                 SizedBox(width: 4),
                                 Text(
                                   '±4m accuracy',
@@ -190,7 +203,10 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                               top: 10,
                               right: 10,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withAlpha(220),
                                   borderRadius: BorderRadius.circular(12),
@@ -198,7 +214,11 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.radar_rounded, size: 12, color: AppColors.tertiary),
+                                    Icon(
+                                      Icons.radar_rounded,
+                                      size: 12,
+                                      color: AppColors.tertiary,
+                                    ),
                                     SizedBox(width: 4),
                                     Text(
                                       '5s Refresh GNSS',
@@ -234,7 +254,8 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                                   const SizedBox(width: 8),
                                   const Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'MG Road, Camp',
@@ -246,7 +267,10 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                                         ),
                                         Text(
                                           'Pune, Maharashtra 411001',
-                                          style: TextStyle(color: Colors.white70, fontSize: 11),
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 11,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -265,21 +289,36 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.battery_charging_full_rounded, size: 16, color: AppColors.tertiary),
+                              const Icon(
+                                Icons.battery_charging_full_rounded,
+                                size: 16,
+                                color: AppColors.tertiary,
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 'Aegis Band: $batteryLevel% Battery',
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ],
                           ),
                           const Row(
                             children: [
-                              Icon(Icons.cloud_sync_rounded, size: 16, color: AppColors.primary),
+                              Icon(
+                                Icons.cloud_sync_rounded,
+                                size: 16,
+                                color: AppColors.primary,
+                              ),
                               SizedBox(width: 4),
                               Text(
                                 'Firebase Stream Active',
-                                style: TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w600),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ],
                           ),
@@ -295,10 +334,14 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.surfaceDark : AppColors.surfaceContainerLowest,
+                    color: isDark
+                        ? AppColors.surfaceDark
+                        : AppColors.surfaceContainerLowest,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isDark ? AppColors.cardBorderDark : const Color(0xFFE2E8F0),
+                      color: isDark
+                          ? AppColors.cardBorderDark
+                          : const Color(0xFFE2E8F0),
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -316,10 +359,16 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                         children: [
                           const Text(
                             'Response Status Tracker',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.secondaryContainer,
                               borderRadius: BorderRadius.circular(12),
@@ -342,7 +391,9 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                         iconColor: AppColors.onTertiaryFixed,
                         iconBg: AppColors.tertiaryFixed,
                         title: 'Emergency Alert Broadcasted',
-                        time: DateTimeFormatter.formatTime(activeEvent?.createdAt ?? DateTime.now()),
+                        time: DateTimeFormatter.formatTime(
+                          activeEvent?.createdAt ?? DateTime.now(),
+                        ),
                         subtitle: 'Cloud beacons initiated across secure safety relays.',
                         isComplete: true,
                         isLast: false,
@@ -383,7 +434,6 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                   ),
                 ),
                 const SizedBox(height: 14),
-
                 // 4. Oversized Direct Action Buttons
                 _buildActionButton(
                   context: context,
@@ -394,9 +444,9 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                   iconColor: AppColors.primary,
                   backgroundColor: AppColors.primary,
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Calling primary trusted guardian: Sunita Sharma (+91 98765 43211)...')),
-                    );
+                    ref
+                        .read(emergencyNotifierProvider.notifier)
+                        .callPrimaryContact('+919876543211');
                   },
                 ),
                 const SizedBox(height: 10),
@@ -410,12 +460,29 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                   iconColor: AppColors.onErrorContainer,
                   backgroundColor: AppColors.emergencyRed,
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: AppColors.emergencyRed,
-                        content: Text('Connecting to Police / Emergency Dispatch 112...'),
-                      ),
-                    );
+                    ref.read(emergencyNotifierProvider.notifier).dial112();
+                  },
+                ),
+                const SizedBox(height: 10),
+
+                _buildActionButton(
+                  context: context,
+                  title: 'Dispatch Emergency SMS',
+                  subtitle: 'Send live coordinates to all trusted guardians',
+                  icon: Icons.sms_rounded,
+                  iconBg: AppColors.tertiaryFixed,
+                  iconColor: AppColors.onTertiaryFixed,
+                  backgroundColor: AppColors.tertiary,
+                  onTap: () {
+                    ref
+                        .read(emergencyNotifierProvider.notifier)
+                        .sendEmergencySms(
+                          phoneNumbers: [
+                            '+919876543211',
+                            '+919876543212',
+                            '+919876543213',
+                          ],
+                        );
                   },
                 ),
                 const SizedBox(height: 10),
@@ -426,16 +493,29 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                   height: 48,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark ? AppColors.surfaceDarkElevated : AppColors.surfaceContainerHigh,
-                      foregroundColor: isDark ? AppColors.textPrimaryDark : AppColors.onSurface,
+                      backgroundColor: isDark
+                          ? AppColors.surfaceDarkElevated
+                          : AppColors.surfaceContainerHigh,
+                      foregroundColor: isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.onSurface,
                       elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                     ),
                     onPressed: () => context.push('/map'),
-                    icon: const Icon(Icons.navigation_rounded, color: AppColors.primary, size: 18),
+                    icon: const Icon(
+                      Icons.navigation_rounded,
+                      color: AppColors.primary,
+                      size: 18,
+                    ),
                     label: const Text(
                       'View Full Live Map Tracker',
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ),
@@ -446,7 +526,9 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.surfaceDarkElevated : AppColors.surfaceContainerLow,
+                    color: isDark
+                        ? AppColors.surfaceDarkElevated
+                        : AppColors.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
@@ -454,7 +536,11 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.lock_clock_rounded, size: 16, color: AppColors.onSurfaceVariant),
+                          Icon(
+                            Icons.lock_clock_rounded,
+                            size: 16,
+                            color: AppColors.onSurfaceVariant,
+                          ),
                           SizedBox(width: 6),
                           Text(
                             'SAFETY RESOLUTION PROTOCOL',
@@ -470,7 +556,11 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                       const SizedBox(height: 6),
                       const Text(
                         'To cancel this alert or mark yourself safe, 4-digit Master Safety PIN authentication is required to prevent coerced deactivations.',
-                        style: TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant, height: 1.35),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.onSurfaceVariant,
+                          height: 1.35,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       SizedBox(
@@ -478,16 +568,27 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                         height: 48,
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceContainerLowest,
+                            backgroundColor: isDark
+                                ? AppColors.surfaceDark
+                                : AppColors.surfaceContainerLowest,
                             foregroundColor: AppColors.tertiary,
                             elevation: 1,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
                           onPressed: () => _showPinResolutionSheet(context),
-                          icon: const Icon(Icons.verified_user_rounded, color: AppColors.tertiary, size: 18),
+                          icon: const Icon(
+                            Icons.verified_user_rounded,
+                            color: AppColors.tertiary,
+                            size: 18,
+                          ),
                           label: const Text(
                             'Resolve & Mark Safe',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
@@ -500,10 +601,14 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.surfaceDark : AppColors.surfaceContainerLowest,
+                    color: isDark
+                        ? AppColors.surfaceDark
+                        : AppColors.surfaceContainerLowest,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isDark ? AppColors.cardBorderDark : const Color(0xFFE2E8F0),
+                      color: isDark
+                          ? AppColors.cardBorderDark
+                          : const Color(0xFFE2E8F0),
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -532,34 +637,48 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                       Text(
                         'NO ACTIVE EMERGENCY',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.tertiary,
-                              letterSpacing: 0.8,
-                            ),
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.tertiary,
+                          letterSpacing: 0.8,
+                        ),
+                        softWrap: true,
                       ),
                       const SizedBox(height: 6),
                       const Text(
                         'Your Aegis Band safety network is armed. Wearable telemetry, fall detection, and biometric anomaly scans are active in standby mode.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 13, color: AppColors.onSurfaceVariant, height: 1.4),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.onSurfaceVariant,
+                          height: 1.4,
+                        ),
                       ),
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 52,
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.emergencyRed,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
                           onPressed: () {
-                            ref.read(emergencyNotifierProvider.notifier).triggerManualSos();
+                            ref
+                                .read(emergencyNotifierProvider.notifier)
+                                .triggerManualSos();
                           },
-                          icon: const Icon(Icons.emergency_rounded, size: 20),
+                          icon: const Icon(Icons.emergency_rounded, size: 22),
                           label: const Text(
-                            'Trigger SOS Emergency Test',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                            'ACTIVATE SOS BEACON NOW',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ),
                       ),
@@ -593,17 +712,16 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
             Container(
               width: 26,
               height: 26,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: iconBg,
-              ),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: iconBg),
               child: Icon(icon, color: iconColor, size: 14),
             ),
             if (!isLast)
               Container(
                 width: 2,
                 height: 38,
-                color: isComplete ? AppColors.tertiaryFixed : const Color(0xFFE2E8F0),
+                color: isComplete
+                    ? AppColors.tertiaryFixed
+                    : const Color(0xFFE2E8F0),
               ),
           ],
         ),
@@ -619,7 +737,10 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     Text(
                       time,
@@ -634,7 +755,10 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: const TextStyle(fontSize: 11, color: AppColors.onSurfaceVariant),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -710,7 +834,11 @@ class _EmergencyScreenState extends ConsumerState<EmergencyScreen> {
                 ),
               ],
             ),
-            const Icon(Icons.chevron_right_rounded, color: Colors.white, size: 24),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.white,
+              size: 24,
+            ),
           ],
         ),
       ),
@@ -723,7 +851,8 @@ class _PulsingEmergencyBanner extends StatefulWidget {
   const _PulsingEmergencyBanner({this.event});
 
   @override
-  State<_PulsingEmergencyBanner> createState() => _PulsingEmergencyBannerState();
+  State<_PulsingEmergencyBanner> createState() =>
+      _PulsingEmergencyBannerState();
 }
 
 class _PulsingEmergencyBannerState extends State<_PulsingEmergencyBanner>
@@ -775,7 +904,11 @@ class _PulsingEmergencyBannerState extends State<_PulsingEmergencyBanner>
                 children: [
                   const Row(
                     children: [
-                      Icon(Icons.emergency_rounded, color: Colors.white, size: 24),
+                      Icon(
+                        Icons.emergency_rounded,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         'EMERGENCY ACTIVE',
@@ -788,19 +921,32 @@ class _PulsingEmergencyBannerState extends State<_PulsingEmergencyBanner>
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(45),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Text(
-                      'SOS TRANSMITTED',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.6,
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(45),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        'SOS TRANSMITTED',
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.6,
+                            ),
+                        // TextStyle(
+                        //   color: Colors.white,
+                        //   fontSize: 10,
+                        //   fontWeight: FontWeight.w800,
+                        //   letterSpacing: 0.6,
+                        // ),
+                        softWrap: true,
                       ),
                     ),
                   ),
@@ -809,7 +955,11 @@ class _PulsingEmergencyBannerState extends State<_PulsingEmergencyBanner>
               const SizedBox(height: 6),
               const Text(
                 'Manual SOS Triggered via Aegis Band',
-                style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 6),
               Row(
@@ -847,7 +997,10 @@ class _PinResolutionModal extends StatefulWidget {
 }
 
 class _PinResolutionModalState extends State<_PinResolutionModal> {
-  final List<TextEditingController> _controllers = List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
 
   @override
@@ -885,7 +1038,9 @@ class _PinResolutionModalState extends State<_PinResolutionModal> {
         bottom: MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceDark : AppColors.surfaceContainerLowest,
+        color: isDark
+            ? AppColors.surfaceDark
+            : AppColors.surfaceContainerLowest,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
@@ -898,11 +1053,18 @@ class _PinResolutionModalState extends State<_PinResolutionModal> {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.lock_rounded, color: AppColors.tertiary, size: 22),
+                    Icon(
+                      Icons.lock_rounded,
+                      color: AppColors.tertiary,
+                      size: 22,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       'Enter Safety PIN',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -931,11 +1093,16 @@ class _PinResolutionModalState extends State<_PinResolutionModal> {
                     textAlign: TextAlign.center,
                     keyboardType: TextInputType.number,
                     maxLength: 1,
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                     decoration: InputDecoration(
                       counterText: '',
                       filled: true,
-                      fillColor: isDark ? AppColors.surfaceDarkElevated : AppColors.surfaceContainerLow,
+                      fillColor: isDark
+                          ? AppColors.surfaceDarkElevated
+                          : AppColors.surfaceContainerLow,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -963,7 +1130,9 @@ class _PinResolutionModalState extends State<_PinResolutionModal> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.tertiary,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
                 onPressed: _verifyPin,
                 child: const Text(
@@ -980,7 +1149,10 @@ class _PinResolutionModalState extends State<_PinResolutionModal> {
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text(
                   'Keep SOS Active',
-                  style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.onSurfaceVariant),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),

@@ -106,7 +106,11 @@ class FirestoreEmergencyRepository implements EmergencyRepository {
       'updatedAt': FieldValue.serverTimestamp(),
     };
 
-    await _emergenciesCol.doc(eventId).set(data);
+    try {
+      await _emergenciesCol.doc(eventId).set(data);
+    } catch (_) {
+      // Offline or network error: continue returning valid emergency event
+    }
 
     return EmergencyEvent(
       eventId: eventId,

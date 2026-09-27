@@ -1,21 +1,38 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../../domain/entities/emergency_event.dart';
 import '../../domain/repositories/emergency_repository.dart';
 import '../../data/repositories/mock_emergency_repository.dart';
 import '../../data/repositories/firestore_emergency_repository.dart';
+import '../../data/services/emergency_dispatch_service.dart';
 import '../../../device/presentation/providers/device_provider.dart';
 import '../../../../core/constants/app_constants.dart';
 
-/// Flag to toggle between Firestore and Mock repository (useful for offline testing/demos)
-final isMockEmergencyModeProvider = Provider<bool>((ref) => false);
+/// Flag to toggle between Firestore and Mock repository.
+/// Defaults to Mock mode if Firebase is not initialized on this platform.
+final isMockEmergencyModeProvider = Provider<bool>((ref) {
+  try {
+    return Firebase.apps.isEmpty;
+  } catch (_) {
+    return true;
+  }
+});
 
 final emergencyRepositoryProvider = Provider<EmergencyRepository>((ref) {
-  final useMock = ref.watch(isMockEmergencyModeProvider);
-  if (useMock) {
+  final forceMock = ref.watch(isMockEmergencyModeProvider);
+  if (forceMock) {
     return MockEmergencyRepository();
   }
-  return FirestoreEmergencyRepository();
+  try {
+    if (Firebase.apps.isEmpty) {
+      return MockEmergencyRepository();
+    }
+    return FirestoreEmergencyRepository();
+  } catch (_) {
+    return MockEmergencyRepository();
+  }
 });
 
 class EmergencyState {
@@ -145,16 +162,27 @@ class EmergencyNotifier extends Notifier<EmergencyState> {
     _countdownTimer?.cancel();
     state = state.copyWith(isTriggering: true, errorMessage: null);
 
+    // Provide emergency vibration feedback
+    try {
+      HapticFeedback.heavyImpact();
+    } catch (_) {}
+
     final deviceState = ref.read(deviceNotifierProvider);
+
+    // Acquire accurate live GPS fix, falling back to device telemetry
+    final locationFix = await EmergencyDispatchService.getAccurateLocation(
+      fallbackLat: deviceState.currentData.latitude ?? 18.52043,
+      fallbackLng: deviceState.currentData.longitude ?? 73.85674,
+    );
 
     try {
       final event = await _repository.triggerEmergency(
         userId: 'usr_owner_demo',
         deviceId: deviceState.deviceId,
         triggerSource: EmergencyTriggerSource.manualSos,
-        latitude: deviceState.currentData.latitude,
-        longitude: deviceState.currentData.longitude,
-        accuracyMeters: deviceState.currentData.gpsAccuracy,
+        latitude: locationFix.latitude,
+        longitude: locationFix.longitude,
+        accuracyMeters: locationFix.accuracyMeters,
         heartRateSnapshot: deviceState.currentData.heartRate,
         batterySnapshot: deviceState.currentData.batteryPercentage,
       );
@@ -166,6 +194,31 @@ class EmergencyNotifier extends Notifier<EmergencyState> {
     } catch (e) {
       state = state.copyWith(isTriggering: false, errorMessage: e.toString());
     }
+  }
+
+  /// Direct Emergency Dispatch Action: Calls 112
+  Future<bool> dial112() async {
+    return await EmergencyDispatchService.launchEmergencyCall('112');
+  }
+
+  /// Direct Emergency Dispatch Action: Calls designated contact
+  Future<bool> callPrimaryContact(String phoneNumber) async {
+    return await EmergencyDispatchService.launchEmergencyCall(phoneNumber);
+  }
+
+  /// Direct Emergency Dispatch Action: Sends emergency SMS with live GPS link to trusted contacts
+  Future<bool> sendEmergencySms({
+    required List<String> phoneNumbers,
+    String userName = 'Aegis Wearer',
+  }) async {
+    final lat = state.activeEvent?.latitude ?? 18.52043;
+    final lng = state.activeEvent?.longitude ?? 73.85674;
+    return await EmergencyDispatchService.launchEmergencySms(
+      phoneNumbers: phoneNumbers,
+      latitude: lat,
+      longitude: lng,
+      userName: userName,
+    );
   }
 
   /// User explicitly confirms emergency during anomaly countdown OR countdown times out

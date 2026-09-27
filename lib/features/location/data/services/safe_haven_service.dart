@@ -43,7 +43,7 @@ class SafeHavenService {
     return [];
   }
 
-  static const double maxRadiusMeters = 3000.0; // Strict 5km radius limit
+  static const double maxRadiusMeters = 5000.0; // Strict 5km radius limit
 
   /// Calls Google Places API (New) searchNearby
   Future<List<SafeHaven>> _fetchGooglePlacesNearby(

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/app_colors.dart';
+import '../../features/emergency/presentation/widgets/sos_activation_dialog.dart';
 
 class EmergencyButton extends StatefulWidget {
   final VoidCallback onTrigger;
@@ -90,88 +91,6 @@ class _EmergencyButtonState extends State<EmergencyButton>
     }
   }
 
-  void _showTapHelpSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 44,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withAlpha(80),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: AppColors.emergencyRedLight,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.emergency_rounded,
-                  size: 40,
-                  color: AppColors.emergencyRed,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Aegis Emergency Beacon',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Press and hold the SOS button for 3 continuous seconds on the dashboard to trigger an emergency broadcast, or tap the button below to activate immediately.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: AppColors.onSurfaceVariant),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.emergencyRed,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                    HapticFeedback.heavyImpact();
-                    widget.onTrigger();
-                  },
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.emergency_rounded, size: 20),
-                      SizedBox(width: 8),
-                      Text(
-                        'ACTIVATE SOS IMMEDIATELY',
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,9 +107,9 @@ class _EmergencyButtonState extends State<EmergencyButton>
             onPointerCancel: _onPointerCancel,
             child: GestureDetector(
               onTap: () {
-                // If tapped briefly instead of held, offer direct confirmation
+                // When tapped/pressed, launch the emergency SOS activation countdown & direct trigger
                 if (!_hasTriggered) {
-                  _showTapHelpSheet(context);
+                  SosActivationDialog.show(context, onActivated: widget.onTrigger);
                 }
               },
               child: SizedBox(

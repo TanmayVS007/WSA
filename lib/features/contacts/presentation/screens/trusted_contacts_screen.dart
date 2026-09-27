@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../emergency/domain/entities/trusted_contact.dart';
+import '../../domain/entities/phone_contact.dart';
+import '../widgets/device_contact_picker_sheet.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/aegis_bottom_nav.dart';
 import '../../../../core/widgets/aegis_top_bar.dart';
@@ -14,33 +16,33 @@ class TrustedContactsNotifier extends Notifier<List<TrustedContact>> {
   @override
   List<TrustedContact> build() {
     return [
-      TrustedContact(
-        contactId: 'tc_01',
-        ownerId: 'usr_owner_demo',
-        name: 'Sunita Sharma',
-        phone: '+91 98230 XXXXX',
-        relationship: 'Mother',
-        alertsEnabled: true,
-        createdAt: DateTime(2026, 8, 1),
-      ),
-      TrustedContact(
-        contactId: 'tc_02',
-        ownerId: 'usr_owner_demo',
-        name: 'Rajesh Sharma',
-        phone: '+91 98221 XXXXX',
-        relationship: 'Father',
-        alertsEnabled: true,
-        createdAt: DateTime(2026, 8, 1),
-      ),
-      TrustedContact(
-        contactId: 'tc_03',
-        ownerId: 'usr_owner_demo',
-        name: 'Priya Patel',
-        phone: '+91 98212 XXXXX',
-        relationship: 'Sister',
-        alertsEnabled: true,
-        createdAt: DateTime(2026, 8, 10),
-      ),
+      // TrustedContact(
+      //   contactId: 'tc_01',
+      //   ownerId: 'usr_owner_demo',
+      //   name: 'Sunita Sharma',
+      //   phone: '+91 98230 XXXXX',
+      //   relationship: 'Mother',
+      //   alertsEnabled: true,
+      //   createdAt: DateTime(2026, 8, 1),
+      // ),
+      // TrustedContact(
+      //   contactId: 'tc_02',
+      //   ownerId: 'usr_owner_demo',
+      //   name: 'Rajesh Sharma',
+      //   phone: '+91 98221 XXXXX',
+      //   relationship: 'Father',
+      //   alertsEnabled: true,
+      //   createdAt: DateTime(2026, 8, 1),
+      // ),
+      // TrustedContact(
+      //   contactId: 'tc_03',
+      //   ownerId: 'usr_owner_demo',
+      //   name: 'Priya Patel',
+      //   phone: '+91 98212 XXXXX',
+      //   relationship: 'Sister',
+      //   alertsEnabled: true,
+      //   createdAt: DateTime(2026, 8, 10),
+      // ),
     ];
   }
 
@@ -74,10 +76,19 @@ class TrustedContactsNotifier extends Notifier<List<TrustedContact>> {
 class TrustedContactsScreen extends ConsumerWidget {
   const TrustedContactsScreen({super.key});
 
-  void _showAddContactDialog(BuildContext context, WidgetRef ref) {
-    final nameCtrl = TextEditingController();
-    final phoneCtrl = TextEditingController();
-    final relationCtrl = TextEditingController(text: 'Family');
+  void _showAddContactDialog(
+    BuildContext context,
+    WidgetRef ref, {
+    PhoneContact? initialContact,
+  }) {
+    final nameCtrl = TextEditingController(text: initialContact?.displayName ?? '');
+    final phoneCtrl = TextEditingController(text: initialContact?.phoneNumber ?? '');
+    final relationCtrl = TextEditingController(
+      text: (initialContact?.label.isNotEmpty == true && initialContact?.label != 'Mobile')
+          ? initialContact!.label
+          : 'Family',
+    );
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
@@ -116,7 +127,58 @@ class TrustedContactsScreen extends ConsumerWidget {
               'Trusted contacts receive immediate SMS and push notifications with live GPS during emergency events.',
               style: TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 16),
+
+            // Option: Pick from Phone Contacts
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.primary, width: 1.2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () async {
+                  final picked = await DeviceContactPickerSheet.show(context);
+                  if (picked != null) {
+                    nameCtrl.text = picked.displayName;
+                    phoneCtrl.text = picked.phoneNumber;
+                    if (picked.label.isNotEmpty && picked.label != 'Mobile') {
+                      relationCtrl.text = picked.label;
+                    }
+                  }
+                },
+                icon: const Icon(Icons.contacts_rounded, size: 18),
+                label: const Text(
+                  'Choose from Phone Contacts',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(child: Divider(color: isDark ? AppColors.cardBorderDark : const Color(0xFFE2E8F0))),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    'OR EDIT / ENTER DETAILS',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.8,
+                      color: isDark ? AppColors.textSecondaryDark : AppColors.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                Expanded(child: Divider(color: isDark ? AppColors.cardBorderDark : const Color(0xFFE2E8F0))),
+              ],
+            ),
+            const SizedBox(height: 14),
+
             TextField(
               controller: nameCtrl,
               decoration: const InputDecoration(
@@ -634,23 +696,69 @@ class TrustedContactsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
 
-              // 4. Add Contact Button
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary, width: 1.5),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              // 4. Contact Addition Actions
+              Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: SizedBox(
+                      height: 48,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        onPressed: () async {
+                          final picked =
+                              await DeviceContactPickerSheet.show(context);
+                          if (picked != null && context.mounted) {
+                            _showAddContactDialog(context, ref, initialContact: picked);
+                          }
+                        },
+                        icon: const Icon(Icons.contacts_rounded, size: 18),
+                        label: const Text(
+                          'From Phone Contacts',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  onPressed: () => _showAddContactDialog(context, ref),
-                  icon: const Icon(Icons.add_rounded, size: 20),
-                  label: const Text(
-                    '+ Add Trusted Guardian',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    flex: 2,
+                    child: SizedBox(
+                      height: 48,
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.primary,
+                          side: const BorderSide(
+                            color: AppColors.primary,
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        onPressed: () => _showAddContactDialog(context, ref),
+                        icon: const Icon(Icons.add_rounded, size: 18),
+                        label: const Text(
+                          'Manual',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
               const SizedBox(height: 20),
             ],

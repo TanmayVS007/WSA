@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
 import 'app_logo.dart';
+import '../../features/emergency/presentation/widgets/sos_activation_dialog.dart';
 
 class AegisTopBar extends ConsumerWidget implements PreferredSizeWidget {
   final String title;
@@ -163,7 +164,7 @@ class AegisTopBar extends ConsumerWidget implements PreferredSizeWidget {
                           shadowColor: AppColors.emergencyRed.withAlpha(90),
                           child: InkWell(
                             borderRadius: BorderRadius.circular(20),
-                            onTap: () => context.push('/emergency'),
+                            onTap: () => SosActivationDialog.show(context),
                             child: const Padding(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 12,
